@@ -185,6 +185,12 @@ async function sendMessage(text, model = null) {
         chat_id: chatId,
         id: assistantMessageId,
         session_id: `discord-${randomUUID()}`,
+        features: {
+          web_search: true,
+          code_interpreter: false,
+          image_generation: false,
+          memory: false
+        },
         background_tasks: {
           title_generation: false,
           tags_generation: false,
