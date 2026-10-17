@@ -112,6 +112,13 @@ console.log(
   }`
 );
 
+function getToolIds() {
+  return (process.env.OPEN_WEBUI_TOOL_IDS || '')
+    .split(',')
+    .map(id => id.trim())
+    .filter(Boolean);
+}
+
 async function sendMessage(text, model = null) {
   checkRateLimit();
 
@@ -174,6 +181,8 @@ async function sendMessage(text, model = null) {
       throw new Error('Open WebUI did not return an ID for the new chat.');
     }
 
+    const toolIds = getToolIds();
+
     // session_id enables built-in tools on Open WebUI's streaming chat path.
     // Do not add a `tools` property: that bypasses built-in tool resolution.
     await axios.post(
@@ -191,6 +200,7 @@ async function sendMessage(text, model = null) {
           image_generation: false,
           memory: false
         },
+        ...(toolIds.length > 0 ? { tool_ids: toolIds } : {}),
         background_tasks: {
           title_generation: false,
           tags_generation: false,
